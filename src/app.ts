@@ -1,11 +1,12 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
+import Controller from 'interfaces/controller.interface';
 
 class App {
     public app: express.Application;
     public port: number;
 
-    constructor(controllers, port, middlewares = [bodyParser.json()]) {
+    constructor(controllers: Controller[], middlewares: any[], port: number) {
         this.app = express();
         this.port = port;
 
@@ -13,7 +14,7 @@ class App {
         this.initializeControllers(controllers);
         
     }
-    initializeControllers(controllers: Array<any>) {
+    initializeControllers(controllers: Array<Controller>) {
         controllers.forEach((controller) => {
             this.app.use('/', controller.router);
         })
