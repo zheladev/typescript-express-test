@@ -9,7 +9,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: toor
     ports:
-      - 27017:27017
+      - 27014:27017
     volumes:
       - mongodb_data_container:/data/db
     
