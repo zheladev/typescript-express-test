@@ -1,8 +1,8 @@
 version: '3.7'
 services:
   mongodb_container:
-    container_name: "mongo:latest"
-    image: mongo
+    container_name: "mongo"
+    image: mongo:latest
     restart: always
     environment:
       MONGO_INITDB_DATABASE: typescript-express-test
