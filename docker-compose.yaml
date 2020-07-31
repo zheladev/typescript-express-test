@@ -1,14 +1,18 @@
 version: '3.7'
 services:
   mongodb_container:
-    image: mongo:latest
+    container_name: "mongo:latest"
+    image: mongo
+    restart: always
     environment:
+      MONGO_INITDB_DATABASE: typescript-express-test
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: toor
     ports:
       - 27017:27017
     volumes:
       - mongodb_data_container:/data/db
+    
 
 volumes:
   mongodb_data_container:

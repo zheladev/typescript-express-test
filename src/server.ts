@@ -1,7 +1,6 @@
 import App from './app';
 import * as bodyParser from 'body-parser';
 import PostsController from './posts/post.controller';
-import * as mongoose from 'mongoose';
 
 const app = new App(
   [
