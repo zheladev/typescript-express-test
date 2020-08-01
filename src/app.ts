@@ -2,6 +2,7 @@ import * as express from 'express';
 import * as bodyParser from 'body-parser';
 import Controller from 'interfaces/controller.interface';
 import * as mongoose from 'mongoose';
+import 'dotenv/config';
 
 class App {
     public app: express.Application;
@@ -34,13 +35,15 @@ class App {
             MONGO_USER,
             MONGO_PASSWORD,
             MONGO_PATH,
+            MONGO_PORT,
+            MONGO_DB
         } = process.env;
 
         mongoose.set('useNewUrlParser', true);
         mongoose.set('useFindAndModify', false);
         mongoose.set('useCreateIndex', true);
         mongoose.set('useUnifiedTopology', true);
-        mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}${MONGO_PATH}`, (err) => console.log(err));
+        mongoose.connect(`mongodb://${MONGO_USER}:${MONGO_PASSWORD}@${MONGO_PATH}:${MONGO_PORT}/${MONGO_DB}?authSource=admin`, (err) => console.log(err));
     }
 
     public listen() {
