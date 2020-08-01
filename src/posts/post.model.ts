@@ -12,6 +12,6 @@ const postSchema = new mongoose.Schema({
  * mongoose.model accepts objects which extend from mongoose.Document. By passing Post intersected with
  * mongoose.Document, we make typescript aware of the parameters we defined in Post's interface. 
  */
-const postModel = mongoose.model<Post & mongoose.Document>('Post', postSchema);
+const postModel = mongoose.model<Post>('Post', postSchema);
 
 export default postModel;

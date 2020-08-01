@@ -1,7 +1,9 @@
+import HttpException from '../exceptions/HttpException';
 import * as express from 'express';
 import Controller from 'interfaces/controller.interface';
 import Post from './post.interface';
 import postModel from './post.model';
+import PostNotFoundException from '../exceptions/PostNotFoundException';
 
 class PostsController implements Controller {
     public path = '/posts';
@@ -18,34 +20,41 @@ class PostsController implements Controller {
         this.router.delete(`${this.path}/:id`, this.deletePost);
         this.router.post(this.path, this.createAPost);
     }
-    private deletePost = (request: express.Request, response: express.Response) => {
+    private deletePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         this.post.findByIdAndDelete(id)
             .then((successResponse) => {
                 if (successResponse) {
                     response.send(200);
-                } else {
-                    response.send(404);
-                }
+                  } else {
+                    next(new PostNotFoundException(id));
+                  }
             });
     }
-    private modifyPost = (request: express.Request, response: express.Response) => {
+    private modifyPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         const postData: Post = request.body;
         this.post.findByIdAndUpdate(id, postData, { new: true })
             .then((post) => {
-                response.send(post);
+                if (post) {
+                    response.send(post);
+                  } else {
+                    next(new PostNotFoundException(id));
+                  }
             });
     }
-    private getPostById = (request: express.Request, response: express.Response) => {
+    private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         this.post.findById(id)
             .then((post) => {
                 if (post) {
                     response.send(post);
                   } else {
-                    response.status(404).send({ error: 'Post not found' });
+                    next(new PostNotFoundException(id));
                   }
+            })
+            .catch((err) => {
+                next(new HttpException(400, `Bad Request, ${id} is not a proper Post Id`));
             });
     }
 
