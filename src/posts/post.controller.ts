@@ -41,7 +41,11 @@ class PostsController implements Controller {
         const id = request.params.id;
         this.post.findById(id)
             .then((post) => {
-                response.send(post);
+                if (post) {
+                    response.send(post);
+                  } else {
+                    response.status(404).send({ error: 'Post not found' });
+                  }
             });
     }
 
