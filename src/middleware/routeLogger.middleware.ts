@@ -7,4 +7,4 @@ function loggerMiddleware(request: Request, response: Response, next) {
     next();
 }
 
-export default loggerMiddleware;
+export default loggerMiddleware; 
