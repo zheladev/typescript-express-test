@@ -1,6 +1,8 @@
 import App from './app';
 import * as bodyParser from 'body-parser';
 import PostsController from './posts/post.controller';
+import errorMiddleware from './middleware/error.middleware';
+import loggerMiddleware from './middleware/routeLogger.middleware';
 
 const app = new App(
   [
@@ -8,11 +10,8 @@ const app = new App(
   ],
   [
     bodyParser.json(),
-    (req: Request, res, next) => {
-      console.log(`${req.method} ${req.url}`);
-      next();
-    }
-
+    loggerMiddleware,
+    errorMiddleware,
   ],
   3000,
 );
