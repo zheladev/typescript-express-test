@@ -22,7 +22,20 @@ class AuthenticationController implements Controller {
     }
 
     private registration = async (request: Request, response: Response, next: NextFunction) => {
-        //TODO
+        const userData: CreateUserDto = request.body;
+        if ( await this.user.findOne({ email: userData.email }) ) {
+            next(new EmailAlreadyInUseException(userData.email));
+        } else {
+            const hashedPassword = await bcrypt.hash(userData.password, 10);  //make it so it automatically gets hashed instead of hashing here?
+            const user = await this.user.create({
+                name: userData.name,
+                email: userData.email,
+                password: hashedPassword
+            });
+            user.password = undefined;
+            response.send(user);
+        }
+
     };
 
     private logIn = async (request: Request, response: Response, next: NextFunction) => {
