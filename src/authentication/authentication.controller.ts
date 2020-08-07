@@ -23,6 +23,7 @@ class AuthenticationController implements Controller {
     }
 
     private initializeRoutes() {
+        this.router.post(`${this.path}/logout`, this.logOut);
         this.router.post(`${this.path}/register`, validationMiddleware(CreateUserDto), this.registration);
         this.router.post(`${this.path}/login`, validationMiddleware(LogInDto), this.logIn);
     }
@@ -61,6 +62,11 @@ class AuthenticationController implements Controller {
           next(new WrongCredentialsException());
         }
     };
+
+    private logOut = (request: Request, response: Response) => {
+        response.setHeader('Set-Cookie', ['Authorization=;Max-age=0']);
+        response.send(200);
+      }
 
     private createToken(user: User) : TokenData {
         const expiresIn = 60*60;
