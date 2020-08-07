@@ -1,13 +1,13 @@
 import HttpException from '../exceptions/HttpException';
 import * as express from 'express';
-import Controller from 'interfaces/controller.interface';
+import Controller from '../interfaces/controller.interface';
 import Post from './post.interface';
 import postModel from './post.model';
 import PostNotFoundException from '../exceptions/PostNotFoundException';
-import validationMiddleware from 'middleware/validation.middleware';
+import validationMiddleware from '../middleware/validation.middleware';
 import CreatePostDto from './post.dto';
-import authMiddleware from 'middleware/auth.middleware';
-import RequestWithUser from 'interfaces/requestWithUser.interface';
+import authMiddleware from '../middleware/auth.middleware';
+import RequestWithUser from '../interfaces/requestWithUser.interface';
 import { Types } from 'mongoose';
 
 class PostsController implements Controller {

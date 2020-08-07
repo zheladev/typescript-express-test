@@ -1,17 +1,17 @@
-import EmailAlreadyInUseException from "exceptions/EmailAlreadyInUseException";
+import EmailAlreadyInUseException from "../exceptions/EmailAlreadyInUseException";
 import { NextFunction, Request, Response, Router } from "express";
-import Controller from "interfaces/controller.interface";
-import validationMiddleware from "middleware/validation.middleware";
+import Controller from "../interfaces/controller.interface";
+import validationMiddleware from "../middleware/validation.middleware";
 import * as bcrypt from 'bcrypt';
-import CreateUserDto from "users/user.dto";
-import userModel from "users/user.model";
+import CreateUserDto from "../users/user.dto";
+import userModel from "../users/user.model";
 import LogInDto from "./logIn.dto";
-import WrongCredentialsException from "exceptions/WrongCredentialsException";
-import TokenData from "interfaces/tokenData.interface";
-import User from "users/user.interface";
-import DataStoredInToken from "interfaces/dataStoredInToken.interface";
-import { IsJWT } from "class-validator";
+import WrongCredentialsException from "../exceptions/WrongCredentialsException";
+import TokenData from "../interfaces/tokenData.interface";
+import User from "../users/user.interface";
+import DataStoredInToken from "../interfaces/dataStoredInToken.interface";
 import { sign } from "jsonwebtoken";
+import 'dotenv/config';
 
 class AuthenticationController implements Controller {
     public path: string = '/auth';
@@ -70,7 +70,7 @@ class AuthenticationController implements Controller {
 
     private createToken(user: User) : TokenData {
         const expiresIn = 60*60;
-        const secret = '21d1209u21d0921d12'; //set in ENV
+        const secret = process.env.JWT_SECRET;
         const dataStoredInToken: DataStoredInToken = {
             _id: user._id
         };
