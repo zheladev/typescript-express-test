@@ -1,11 +1,14 @@
 import HttpException from '../exceptions/HttpException';
 import * as express from 'express';
-import Controller from 'interfaces/controller.interface';
+import Controller from '../interfaces/controller.interface';
 import Post from './post.interface';
 import postModel from './post.model';
 import PostNotFoundException from '../exceptions/PostNotFoundException';
-import validationMiddleware from 'middleware/validation.middleware';
+import validationMiddleware from '../middleware/validation.middleware';
 import CreatePostDto from './post.dto';
+import authMiddleware from '../middleware/auth.middleware';
+import RequestWithUser from '../interfaces/requestWithUser.interface';
+import { Types } from 'mongoose';
 
 class PostsController implements Controller {
     public path = '/posts';
@@ -18,11 +21,13 @@ class PostsController implements Controller {
     private initializeRoutes() {
         this.router.get(this.path, this.getAllPosts);
         this.router.get(`${this.path}/:id`, this.getPostById);
-        this.router.patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.modifyPost);
-        this.router.delete(`${this.path}/:id`, this.deletePost);
-        this.router.post(this.path, validationMiddleware(CreatePostDto), this.createAPost);
+        this.router
+          .all(`${this.path}/*`, authMiddleware)
+          .patch(`${this.path}/:id`, validationMiddleware(CreatePostDto, true), this.modifyPost)
+          .delete(`${this.path}/:id`, this.deletePost)
+          .post(this.path, authMiddleware, validationMiddleware(CreatePostDto), this.createPost);
     }
-    private deletePost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+    private deletePost = (request: RequestWithUser, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
         this.post.findByIdAndDelete(id)
             .then((successResponse) => {
@@ -33,7 +38,8 @@ class PostsController implements Controller {
                   }
             });
     }
-    private modifyPost = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+    private modifyPost = (request: RequestWithUser, response: express.Response, next: express.NextFunction) => {
+        //TODO: add modifiedBy and modifiedAt attr
         const id = request.params.id;
         const postData: Post = request.body;
         this.post.findByIdAndUpdate(id, postData, { new: true })
@@ -67,9 +73,12 @@ class PostsController implements Controller {
             })
     }
 
-    private createAPost = (request: express.Request, response: express.Response) => {
+    private createPost = (request: RequestWithUser, response: express.Response) => {
         const postData: Post = request.body;
-        const createdPost = new this.post(postData);
+        const createdPost = new this.post({
+            ...postData,
+            authorId: Types.ObjectId(request.user._id)
+        });
         createdPost.save()
             .then((savedPost) => {
                 response.send(savedPost);

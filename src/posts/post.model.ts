@@ -5,6 +5,7 @@ const postSchema = new mongoose.Schema({
     author: String,
     content: String,
     title: String,
+    authorId: mongoose.Types.ObjectId,
 });
 
 /** https://www.typescriptlang.org/docs/handbook/release-notes/typescript-1-6.html#intersection-types
