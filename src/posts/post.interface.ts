@@ -5,6 +5,7 @@ interface Post extends mongoose.Document {
     author: string;
     content: string;
     title: string;
+    authorId: mongoose.Types.ObjectId,
 }
 
 export default Post;

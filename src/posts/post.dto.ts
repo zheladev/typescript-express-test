@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsMongoId, IsString, IsUUID } from 'class-validator';
 
 class CreatePostDto {
     @IsString()
