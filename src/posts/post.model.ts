@@ -1,11 +1,19 @@
 import * as mongoose from 'mongoose';
 import Post from './post.interface';
 
+const addressSchema = new mongoose.Schema({
+    city: String,
+    street: String,
+})
+
 const postSchema = new mongoose.Schema({
-    author: String,
+    author: {
+        ref: 'User',
+        type: mongoose.Types.ObjectId,
+    },
+    //address: addressSchema,
     content: String,
     title: String,
-    authorId: mongoose.Types.ObjectId,
 });
 
 /** https://www.typescriptlang.org/docs/handbook/release-notes/typescript-1-6.html#intersection-types

@@ -51,9 +51,9 @@ class PostsController implements Controller {
                   }
             });
     }
-    private getPostById = (request: express.Request, response: express.Response, next: express.NextFunction) => {
+    private getPostById = async (request: express.Request, response: express.Response, next: express.NextFunction) => {
         const id = request.params.id;
-        this.post.findById(id)
+        this.post.findById(id).populate('author', '-password')
             .then((post) => {
                 if (post) {
                     response.send(post);
@@ -66,22 +66,22 @@ class PostsController implements Controller {
             });
     }
 
-    private getAllPosts = (request: express.Request, response: express.Response) => {
-        this.post.find()
-            .then((posts) => {
-                response.send(posts);
-            })
+    private getAllPosts = async (request: express.Request, response: express.Response) => {
+        const posts = await this.post.find().populate('author', '-password');
+        response.send(posts);
+            
     }
 
-    private createPost = (request: RequestWithUser, response: express.Response) => {
+    private createPost = async (request: RequestWithUser, response: express.Response) => {
         const postData: Post = request.body;
         const createdPost = new this.post({
             ...postData,
-            authorId: Types.ObjectId(request.user._id)
+            author: request.user._id
         });
         createdPost.save()
             .then((savedPost) => {
-                response.send(savedPost);
+                savedPost.populate('author', '-password').execPopulate()
+                    .then(popPost => response.send(popPost));
             });
     }
 }
