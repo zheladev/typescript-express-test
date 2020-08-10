@@ -1,18 +1,31 @@
-version: '3.7'
+version: "3"
 services:
-  mongodb_container:
-    container_name: "mongo"
-    image: mongo:latest
-    restart: always
-    environment:
-      MONGO_INITDB_DATABASE: typescript-express-test
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: toor
+  postgres:
+    container_name: postgres
+    image: postgres:latest
     ports:
-      - 27014:27017
+    - "5436:5432"
     volumes:
-      - mongodb_data_container:/data/db
-    
-
-volumes:
-  mongodb_data_container:
+    - /data/postgres:/data/postgres
+    env_file:
+    - docker.env
+    networks:
+    - postgres
+ 
+  pgadmin:
+    links:
+    - postgres:postgres
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+    - "8080:80"
+    volumes:
+    - /data/pgadmin:/root/.pgadmin
+    env_file:
+    - docker.env
+    networks:
+    - postgres
+ 
+networks:
+  postgres:
+    driver: bridge
